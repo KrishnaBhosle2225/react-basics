@@ -74,3 +74,82 @@ public class YAMLResolver {
     <version>1.29</version> <!-- Update to the latest version if needed -->
 </dependency>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Representer;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+
+public class YAMLModifier {
+
+    public static void main(String[] args) {
+        try {
+            // Load the YAML file
+            Yaml yaml = new Yaml(new Constructor(), new Representer());
+            FileInputStream inputStream = new FileInputStream("input.yaml");
+            Map<String, Object> data = yaml.load(inputStream);
+
+            // Modify the YAML content
+            modifyRefs(data);
+
+            // Write the modified content back to the file
+            FileWriter writer = new FileWriter("output.yaml");
+            yaml.dump(data, writer);
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void modifyRefs(Map<String, Object> data) {
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            if (entry.getValue() instanceof Map) {
+                modifyRefs((Map<String, Object>) entry.getValue());
+            } else if (entry.getValue() instanceof String) {
+                String value = (String) entry.getValue();
+                // Modify the $ref value if it matches the pattern
+                if (value.startsWith("$ref")) {
+                    String newValue = modifyRef(value);
+                    entry.setValue(newValue);
+                }
+            }
+        }
+    }
+
+    private static String modifyRef(String refValue) {
+    // Extract the path from the $ref value
+    String path = refValue.substring("$ref:".length()).trim();
+    // Modify the path format using a regular expression
+    path = "#" + path.replaceAll("\\.\\./", "");
+    return path;
+}
+
+}
+
+
