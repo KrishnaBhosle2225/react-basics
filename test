@@ -1,0 +1,67 @@
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Representer;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Map;
+
+public class YAMLResolver {
+
+    public static void main(String[] args) {
+        try {
+            // Load the YAML file
+            Yaml yaml = new Yaml(new Constructor(), new Representer());
+            FileInputStream inputStream = new FileInputStream("your_yaml_file.yaml");
+            Map<String, Object> data = yaml.load(inputStream);
+
+            // Resolve $ref references
+            resolveRefs(data);
+
+            // Output the resolved YAML
+            System.out.println(yaml.dump(data));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void resolveRefs(Map<String, Object> data) {
+        // Iterate through the data map
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            // Check if the value is a map
+            if (entry.getValue() instanceof Map) {
+                // Recursively resolve references in the map
+                resolveRefs((Map<String, Object>) entry.getValue());
+            }
+            // Check if the value is a string and starts with "$ref"
+            else if (entry.getValue() instanceof String && ((String) entry.getValue()).startsWith("$ref")) {
+                // Extract the reference path
+                String refPath = ((String) entry.getValue()).substring("$ref:".length()).trim();
+                // Resolve the reference path
+                Object resolvedValue = resolveRef(data, refPath);
+                // Replace the reference with the resolved value
+                entry.setValue(resolvedValue);
+            }
+        }
+    }
+
+    private static Object resolveRef(Map<String, Object> data, String refPath) {
+        // Split the reference path by "/"
+        String[] parts = refPath.split("/");
+        // Traverse through the data map using the reference path
+        Object result = data;
+        for (String part : parts) {
+            if (result instanceof Map) {
+                result = ((Map<String, Object>) result).get(part);
+            } else {
+                return null;
+            }
+        }
+        return result;
+    }
+}
