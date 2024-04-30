@@ -65,3 +65,12 @@ public class YAMLResolver {
         return result;
     }
 }
+
+
+
+<dependency>
+    <groupId>org.yaml</groupId>
+    <artifactId>snakeyaml</artifactId>
+    <version>1.29</version> <!-- Update to the latest version if needed -->
+</dependency>
+
