@@ -29,3 +29,56 @@ generate_types:
   artifacts:
     paths:
       - instructions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+stages:
+  - generate_types
+
+generate_types:
+  stage: generate_types
+  script:
+    # Create the instructions directory if it doesn't exist
+    - mkdir -p instructions
+    # List all TypeScript files in the specified directory
+    - files=$(find . -name "*.ts" -exec basename {} \;)
+    # If there are no TypeScript files found, exit the script
+    - if [ -z "$files" ]; then echo "No TypeScript files found."; exit 0; fi
+    # Create the index.ts file
+    - touch instructions/index.ts
+    # Iterate over each file
+    - |
+      for file in $files; do
+        # Extract the file name without the extension
+        file_name=$(echo "$file" | cut -f 1 -d '.')
+        # Construct the import statement for each file
+        echo "import { paths as ${file_name}_paths, components as ${file_name}_components } from \"./${file_name}\";" >> instructions/index.ts
+      done
+    # Generate the interface definition
+    - echo "export interface SecuritiesSettlementsInstructions {" >> instructions/index.ts
+    # Iterate over each file again to construct the interface body
+    - |
+      for file in $files; do
+        file_name=$(echo "$file" | cut -f 1 -d '.')
+        echo "  ${file_name}_paths: ${file_name}_paths," >> instructions/index.ts
+        echo "  ${file_name}_components: ${file_name}_components," >> instructions/index.ts
+      done
+    # Close the interface definition
+    - echo "}" >> instructions/index.ts
+  artifacts:
+    paths:
+      - instructions
+
