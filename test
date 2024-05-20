@@ -1,7 +1,1 @@
-file_name="data-manager"
-# Replace hyphens with spaces: "data manager"
-temp_name=$(echo "$file_name" | sed -E 's/[_-]/ /g')
-# Capitalize each word and remove spaces: "DataManager"
-pascal_case_file_name=$(echo "$temp_name" | awk '{for (i=1; i<=NF; i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1' | tr -d ' ')
-# Add the .ts extension: "DataManager.ts"
-pascal_case_file_name="${pascal_case_file_name}.ts"
+
