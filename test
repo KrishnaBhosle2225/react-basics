@@ -86,3 +86,60 @@ while IFS= read -r line; do
   fi
 done <<< "$artifacts"
 
+
+
+
+
+
+
+
+
+
+
+
+
+#!/bin/bash
+
+# Configuration
+NEXUS_URL="http://<nexus-repo-url>"
+REPO_NAME="<repository-name>"
+POM_FILE="pom.xml"
+
+# Function to fetch the latest version from Nexus
+get_latest_version() {
+  local groupId=$1
+  local artifactId=$2
+  local groupPath=$(echo $groupId | tr '.' '/')
+  local metadataUrl="$NEXUS_URL/repository/$REPO_NAME/$groupPath/$artifactId/maven-metadata.xml"
+  local latestVersion=$(curl -s $metadataUrl | grep '<latest>' | sed -e 's/<latest>//' -e 's/<\/latest>//' | xargs)
+  echo $latestVersion
+}
+
+# Extract artifact items from pom.xml inside plugin configuration
+# Ensure proper handling of namespaces
+artifacts=$(xmllint --xpath "//*[local-name()='plugin']/*[local-name()='configuration']/*[local-name()='dependencies']/*[local-name()='dependency']" $POM_FILE 2>/dev/null)
+
+# Check if any artifacts are found
+if [[ -z "$artifacts" ]]; then
+  echo "No artifacts found in plugin configuration."
+  exit 1
+fi
+
+# Iterate through each artifact and get the latest version
+echo "Fetching latest versions for artifacts in plugin configuration..."
+
+# Read the artifacts and fetch the latest version for each
+while IFS= read -r line; do
+  groupId=$(echo $line | grep -oP '(?<=<groupId>).*?(?=</groupId>)')
+  artifactId=$(echo $line | grep -oP '(?<=<artifactId>).*?(?=</artifactId>)')
+  version=$(echo $line | grep -oP '(?<=<version>).*?(?=</version>)')
+
+  if [[ -n "$groupId" && -n "$artifactId" ]]; then
+    latestVersion=$(get_latest_version "$groupId" "$artifactId")
+    echo "Artifact: $groupId:$artifactId"
+    echo "Current Version: $version"
+    echo "Latest Version: $latestVersion"
+    echo
+  fi
+done <<< "$artifacts"
+
