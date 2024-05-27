@@ -1,3 +1,46 @@
+#!/bin/bash
+
+# Initialize temporary variables
+t1=""
+t2=""
+t3=""
+
+# Buffer to accumulate XML entry
+entry_buffer=""
+
+while IFS= read -r line; do
+  # Accumulate lines in the buffer
+  entry_buffer+="$line"
+
+  # Check if we have all three elements in the buffer
+  if [[ $entry_buffer == *"</groupId>"* && $entry_buffer == *"</artifactId>"* && $entry_buffer == *"</version>"* ]]; then
+    # Extract groupId, artifactId, and version from the buffer
+    groupId=$(echo "$entry_buffer" | grep -oP '(?<=<groupId>).*?(?=</groupId>)')
+    artifactId=$(echo "$entry_buffer" | grep -oP '(?<=<artifactId>).*?(?=</artifactId>)')
+    version=$(echo "$entry_buffer" | grep -oP '(?<=<version>).*?(?=</version>)')
+
+    # Check if all three values are non-empty
+    if [[ -n "$groupId" && -n "$artifactId" && -n "$version" ]]; then
+      # Print the values
+      echo "groupId is $groupId"
+      echo "artifactId is $artifactId"
+      echo "version is $version"
+      echo
+    fi
+
+    # Clear the buffer for the next entry
+    entry_buffer=""
+  fi
+done < "input.xml"
+
+
+
+
+
+
+
+
+
 
 #!/bin/bash
 
