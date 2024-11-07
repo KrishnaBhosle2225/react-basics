@@ -1,26 +1,43 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.Deque;
+import java.util.LinkedList;
 
-public record TokenSet(Map<Character, Operation> charOperations, Map<String, Operation> stringOperations) {
+public class RPNCalculator implements Calculator {
+    private final TokenSet tokenSet;
 
-    public TokenSet() {
-        this(new HashMap<>(), new HashMap<>());
+    public RPNCalculator(TokenSet tokenSet) {
+        this.tokenSet = tokenSet;
     }
 
-    public void addOperation(char symbol, Operation operation) {
-        charOperations.put(symbol, operation);
+    @Override
+    public double calculate(String expression) {
+        Deque<Double> stack = new LinkedList<>();
+        String[] tokens = expression.split("\\s+");  // Split by spaces for multi-character tokens
+
+        for (String token : tokens) {
+            if (isNumber(token)) {
+                stack.push(Double.parseDouble(token));
+            } else {
+                tokenSet.getOperation(getTokenKey(token))
+                        .ifPresentOrElse(
+                                op -> processOperation(stack, op),
+                                () -> { throw new IllegalArgumentException("Unknown token: " + token); }
+                        );
+            }
+        }
+        return stack.pop();
     }
 
-    public void addOperation(String symbol, Operation operation) {
-        stringOperations.put(symbol, operation);
+    private void processOperation(Deque<Double> stack, Operation operation) {
+        double b = stack.pop();
+        double a = stack.pop();
+        stack.push(operation.apply(a, b));
     }
 
-    public Optional<Operation> getOperation(Object symbol) {
-        return switch (symbol) {
-            case Character c -> Optional.ofNullable(charOperations.get(c));
-            case String s -> Optional.ofNullable(stringOperations.get(s));
-            default -> Optional.empty();
-        };
+    private boolean isNumber(String token) {
+        return token.chars().allMatch(Character::isDigit);
+    }
+
+    private Object getTokenKey(String token) {
+        return (token.length() == 1) ? token.charAt(0) : token;
     }
 }
