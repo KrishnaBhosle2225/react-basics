@@ -1,29 +1,30 @@
-public class TokenSetFactory {
-    public static TokenSet createBasicTokenSet() {
-        TokenSet tokenSet = new TokenSet();
-        tokenSet.addOperation('+', Double::sum);
-        tokenSet.addOperation('-', (a, b) -> a - b);
-        tokenSet.addOperation('*', (a, b) -> a * b);
-        tokenSet.addOperation('/', (a, b) -> a / b);
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-        // Adding English tokens
-        tokenSet.addOperation("add", Double::sum);
-        tokenSet.addOperation("sub", (a, b) -> a - b);
-        tokenSet.addOperation("mul", (a, b) -> a * b);
-        tokenSet.addOperation("div", (a, b) -> a / b);
-        
-        return tokenSet;
+class RPNCalculatorTest {
+
+    @Test
+    void testBasicOperations() {
+        Calculator calculator = new RPNCalculator(TokenSetFactory.createBasicTokenSet());
+
+        assertEquals(7.0, calculator.calculate("3 4 add"));        // 3 + 4
+        assertEquals(77.0, calculator.calculate("3 4 add 5 6 add mul")); // (3 + 4) * (5 + 6)
+        assertEquals(1.0, calculator.calculate("3 4 sub 5 add"));  // (3 - 4) + 5
     }
 
-    public static TokenSet createExtendedTokenSet() {
-        TokenSet tokenSet = createBasicTokenSet();
-        tokenSet.addOperation('%', (a, b) -> a % b);
-        tokenSet.addOperation('^', Math::pow);
+    @Test
+    void testExtendedOperations() {
+        Calculator calculator = new RPNCalculator(TokenSetFactory.createExtendedTokenSet());
 
-        // Adding English tokens for extended operations
-        tokenSet.addOperation("mod", (a, b) -> a % b);
-        tokenSet.addOperation("pow", Math::pow);
-        
-        return tokenSet;
+        assertEquals(81.0, calculator.calculate("9 2 pow"));       // 9^2
+        assertEquals(3.0, calculator.calculate("9 3 mod"));        // 9 % 3
+    }
+
+    @Test
+    void testMixedNotation() {
+        Calculator calculator = new RPNCalculator(TokenSetFactory.createExtendedTokenSet());
+
+        assertEquals(10.0, calculator.calculate("3 4 add 5 sub 6 add")); // ((3 + 4) - 5) + 6
+        assertEquals(36.0, calculator.calculate("6 6 mul"));            // 6 * 6
     }
 }
