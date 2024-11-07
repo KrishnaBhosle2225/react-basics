@@ -1,3 +1,26 @@
-import java.util.function.BiFunction;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-public interface Operation extends BiFunction<Double, Double, Double> {}
+public record TokenSet(Map<Character, Operation> charOperations, Map<String, Operation> stringOperations) {
+
+    public TokenSet() {
+        this(new HashMap<>(), new HashMap<>());
+    }
+
+    public void addOperation(char symbol, Operation operation) {
+        charOperations.put(symbol, operation);
+    }
+
+    public void addOperation(String symbol, Operation operation) {
+        stringOperations.put(symbol, operation);
+    }
+
+    public Optional<Operation> getOperation(Object symbol) {
+        return switch (symbol) {
+            case Character c -> Optional.ofNullable(charOperations.get(c));
+            case String s -> Optional.ofNullable(stringOperations.get(s));
+            default -> Optional.empty();
+        };
+    }
+}
