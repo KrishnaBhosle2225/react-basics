@@ -26,3 +26,43 @@ Sure, here are some very simple one or two-line examples:
 7. Proactivity: "I took the initiative on tasks, especially in areas where I could improve my skills. I plan to be even more proactive by looking for areas where I can help the team before being asked."
 
 8. Open to Feedback: "I listened to feedback to improve my work. I’ll keep this up by asking for feedback regularly and making adjustments to grow faster."
+
+
+Subject: Proposal to Implement API Generator in Keytrader
+
+Hi [ABC’s Name],
+
+I wanted to share a quick overview of the API Generator we’ve developed and recently deployed in the Keylink product—and also explore the possibility of implementing it in the Keytrader repository as well.
+
+Problem Statement:
+
+Currently, whenever backend developers introduce API changes, front-end developers have to manually sync those changes into the front-end codebase. This manual step is time-consuming and error-prone.
+
+Solution:
+
+To streamline this process, we’ve built an API Generator tool that automates the sync between backend and frontend.
+
+Highlights:
+	1.	The API Generator fetches the latest API versions from Nexus and converts the API specification files (YAML) into TypeScript interfaces and enums.
+	2.	These generated types and enums are automatically made available in the front-end repository.
+	3.	This ensures front-end developers always have access to the latest API definitions without any manual work.
+
+Benefits:
+	•	Reduced manual effort, freeing up developer time.
+	•	Faster development cycles with real-time API updates.
+	•	Improved collaboration between frontend and backend teams.
+
+You can check out the project here:
+API Generator Repository
+
+Next Steps:
+
+I’d like to explore the idea of implementing this API Generator in your Keytrader repository. Let me know if your team would be open to adopting it.
+
+Also, I’d be more than happy to give you a live demo of how it works for better understanding.
+
+Looking forward to your thoughts!
+
+Best regards,
+[Your Name]
+
