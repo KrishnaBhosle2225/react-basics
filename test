@@ -66,3 +66,46 @@ Looking forward to your thoughts!
 Best regards,
 [Your Name]
 
+
+
+Subject: Proposal to Implement API Generator in Keytrader
+
+Hi Radwana and Noreen,
+
+I hope you’re doing well.
+
+I wanted to share a quick overview of the API Generator we’ve recently developed and deployed in the Keylink product, and propose implementing it in the Keytrader repository as well.
+
+Problem Statement:
+
+Currently, whenever backend developers introduce API changes, front-end developers need to manually sync those changes into the front-end codebase. This process can be time-consuming and prone to manual errors.
+
+Solution:
+
+To solve this, we’ve built an API Generator tool that automates the syncing process between backend and frontend teams.
+
+Highlights:
+	1.	The API Generator fetches the latest API versions from Nexus and converts the API specification (YAML) files into TypeScript interfaces and enums.
+	2.	These generated types and enums are then automatically made available in the front-end repository.
+	3.	This enables front-end developers to always reference the latest API definitions without any manual intervention.
+
+Benefits:
+	•	Reduced manual work, freeing up valuable development time.
+	•	Faster development cycles with real-time API updates.
+	•	Improved collaboration between backend and frontend teams.
+
+You can view the project here:
+API Generator Repository
+
+Next Steps:
+
+I’d like to explore the possibility of integrating this tool into the Keytrader repository.
+Please let me know if you’re open to implementing it—I’d also be happy to schedule a live demo to walk you through how it works and answer any questions.
+
+Looping in my LM for visibility.
+
+Looking forward to your thoughts!
+
+Best regards,
+[Your Name]
+
